@@ -1,0 +1,8 @@
+version: "3.3"
+
+services:
+  loungebot:
+    build: .
+    container_name: loungebot
+    restart: always
+    tty: true
