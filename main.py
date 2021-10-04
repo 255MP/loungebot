@@ -24,6 +24,7 @@ from commands import remove_ladder_player
 from commands import remove_placement
 from commands import remove_player
 from commands import remove_tier
+from commands import restore_event
 from commands import retrieve_ladder_player
 from commands import retrieve_player
 from commands import update_player_discord_user_id
@@ -83,6 +84,7 @@ bot.add_cog(remove_ladder_player.Updater(bot))
 bot.add_cog(remove_placement.Administrator(bot))
 bot.add_cog(remove_player.Updater(bot))
 bot.add_cog(remove_tier.Administrator(bot))
+bot.add_cog(restore_event.Updater(bot))
 bot.add_cog(retrieve_ladder_player.Updater(bot))
 bot.add_cog(retrieve_player.Updater(bot))
 bot.add_cog(update_player_discord_user_id.Updater(bot))

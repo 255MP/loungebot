@@ -127,6 +127,20 @@ async def remove_ladder_event(event_id: int) -> dict:
         return {"status": "failed", "reason": "unable to connect to lounge api"}
 
 
+async def restore_ladder_event(event_id: int) -> dict:
+    try:
+        params: dict = \
+            {
+                "event_id": event_id,
+                "code": config.get_lounge_webservice_api_token()
+            }
+        url: str = config.get_lounge_webservice() + "/api/ladderevent.php"
+        response: requests.Response = requests.put(url, headers={"content-type": "application/json"}, params=params)
+        return json.loads(response.text.strip())
+    except Exception:
+        return {"status": "failed", "reason": "unable to connect to lounge api"}
+
+
 async def add_ladder_player_award(ladder_id: int, player_names: str, award: int) -> dict:
     try:
         params: dict = \
