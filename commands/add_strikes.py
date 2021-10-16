@@ -87,7 +87,7 @@ class Updater(commands.Cog):
                 }
 
     @staticmethod
-    def parse_response(json_response: dict):
+    def parse_response(ladder_name: str, json_response: dict):
         if json_response["status"] == "failed":
             if json_response["reason"]:
                 return json_response["reason"]
@@ -96,6 +96,8 @@ class Updater(commands.Cog):
         else:
             text = ""
             for result in json_response["results"]:
+                text += ladder_name
+                text += " - "
                 text += str(result["player_name"])
                 text += ", strikes: "
                 text += str(result["strikes"])
@@ -117,7 +119,7 @@ class Updater(commands.Cog):
             player_names: str = result["player_names"]
             strikes: int = result["strikes"]
             json_response: dict = await lounge.add_ladder_player_strikes(ladder_id, player_names, strikes)
-            return Updater.parse_response(json_response)
+            return Updater.parse_response(str(parameters[0]).lower(), json_response)
         else:
             return result["message"]
 

@@ -136,6 +136,7 @@ async def restore_ladder_event(event_id: int) -> dict:
             }
         url: str = config.get_lounge_webservice() + "/api/ladderevent.php"
         response: requests.Response = requests.put(url, headers={"content-type": "application/json"}, params=params)
+        print(response.text.strip())
         return json.loads(response.text.strip())
     except Exception:
         return {"status": "failed", "reason": "unable to connect to lounge api"}
