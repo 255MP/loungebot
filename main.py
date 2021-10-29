@@ -35,7 +35,10 @@ from discordevent import display_name_update
 # Third party
 import discord
 from discord.ext import commands
+import logging
 
+# Configure logging
+logging.basicConfig(filename="log/error.log", format='%(asctime)s %(message)s')
 
 # Configure bot
 intents = discord.Intents.default()

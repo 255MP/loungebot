@@ -4,5 +4,7 @@ services:
   loungebot:
     build: .
     container_name: loungebot
+    volumes:
+      - ./log:/usr/src/loungebot/log
     restart: always
     tty: true
