@@ -11,17 +11,17 @@ class Updater(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="retrieveladderplayer",
-                      description="Retrieve information about a particular ladder player"
+    @commands.command(name="gamecounter",
+                      description="Retrieve information about a particular ladder player's game counter"
                                   + "\n\n"
-                                  + "!retrieveladderplayer <rt/ct>, <player's name>"
+                                  + "!gamecounter <rt/ct>, <player's name>"
                                   + "\n\n"
-                                  + "example: !retrieveladderplayer rt, 255mp",
-                      brief="Retrieve information about a particular ladder player")
+                                  + "example: !gamecounter rt, 255mp",
+                      brief="Retrieve information about a particular ladder player's game counter")
     async def exec(self, ctx: discord.ext.commands.Context, *, args: str = None):
         if not (discord_common_utils.is_lounge_updater(ctx.author.roles)
                 or discord_common_utils.is_owner(ctx.author.id)):
-            message: discord.message.Message = await ctx.send("retrieveladderplayer is an updater command")
+            message: discord.message.Message = await ctx.send("gamecounter is an updater command")
             await asyncio.sleep(3)
             await message.delete()
         else:
@@ -29,9 +29,9 @@ class Updater(commands.Cog):
             if not parameters:
                 message: str = ""
                 message += "```"
-                message += "!retrieveladderplayer <rt/ct>, <player's name>"
+                message += "!gamecounter <rt/ct>, <player's name>"
                 message += "\n\n"
-                message += "example: !retrieveladderplayer rt, 255mp"
+                message += "example: !gamecounter rt, 255mp"
                 message += "```"
             else:
                 message: str = await self.retrieve_ladder_player(parameters)
@@ -85,14 +85,8 @@ class Updater(commands.Cog):
                     return "player not found"
             else:
                 text = json_response["results"][0]["player_name"]
-                if json_response["results"][0]["current_mmr"] is not None:
-                    text += ", MMR: " + str(json_response["results"][0]["current_mmr"])
-                    text += " (" + json_response["results"][0]["current_division"] + ")"
-                if json_response["results"][0]["current_lr"] is not None:
-                    text += ", LR: " + str(json_response["results"][0]["current_lr"])
-                    text += " (" + json_response["results"][0]["current_class"] + ")"
-                if json_response["results"][0]["penalties"] is not None:
-                    text += ", Award/Penalties: " + str(json_response["results"][0]["penalties"])
+                if json_response["results"][0]["game_counter"] is not None:
+                    text += ", Game Counter: " + str(json_response["results"][0]["game_counter"])
                 if text:
                     return text
                 else:

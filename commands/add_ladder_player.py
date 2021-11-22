@@ -101,10 +101,7 @@ class Updater(commands.Cog):
             else:
                 text = json_response["results"][0]["player_name"]
                 if json_response["results"][0]["current_mmr"] is not None:
-                    if int(json_response["results"][0]["current_mmr"]) < 0:
-                        text += ", MMR: Below 0"
-                    else:
-                        text += ", MMR: " + str(json_response["results"][0]["current_mmr"])
+                    text += ", MMR: " + str(json_response["results"][0]["current_mmr"])
                     text += " (" + json_response["results"][0]["current_division"] + ")"
                 if json_response["results"][0]["current_lr"] is not None:
                     text += ", LR: " + str(json_response["results"][0]["current_lr"])
