@@ -31,6 +31,7 @@ from commands import retrieve_player
 from commands import update_player_discord_user_id
 from commands import update_player_flag
 from commands import update_player_name
+from customization.loungebot import LoungeBot
 from discordevent import display_name_update
 
 # Third party
@@ -44,10 +45,10 @@ logging.basicConfig(filename="log/error.log", format='%(asctime)s %(message)s')
 # Configure bot
 intents = discord.Intents.default()
 intents.members = True
-bot = commands.Bot(command_prefix="!",
-                   case_insensitive=True,
-                   intents=intents,
-                   allowed_mentions=discord.AllowedMentions.none())
+bot = LoungeBot(command_prefix="!",
+                case_insensitive=True,
+                intents=intents,
+                allowed_mentions=discord.AllowedMentions.none())
 
 
 # Bot events

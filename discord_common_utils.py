@@ -17,7 +17,7 @@ def is_lounge_admin(roles: list) -> bool:
 def is_lounge_updater(roles: list) -> bool:
     return contains_role(roles, ["RT Updater", "Lower Tier RT Arbitrator", "Higher Tier RT Arbitrator",
                                  "CT updater", "Lower Tier CT Arbitrator", "Higher Tier CT Arbitrator",
-                                 "RT Admin", "CT Admin", "Boss"])
+                                 "RT Admin", "CT Admin", "Boss", "Good Boy Bot"])
 
 
 def contains_role(roles: list, matches: list) -> bool:
