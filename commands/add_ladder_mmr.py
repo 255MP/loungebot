@@ -11,25 +11,21 @@ class Updater(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="award",
-                      aliases=["addaward",
-                               "addreward",
-                               "addladderaward",
-                               "addladderreward"],
-                      description="Adds an award to a particular ladder player"
+    @commands.command(name="addmmr",
+                      description="Adds/removes MMR to a particular ladder player"
                                   + "\n\n"
-                                  + "!award <rt/ct>, <player's name>, <amount>"
+                                  + "!addmmr <rt/ct>, <player's name>, <amount>"
                                   + "\n\n"
-                                  + "example: !award rt, 255mp, 200"
+                                  + "example: !addmmr rt, 255mp, 200"
                                   + "\n"
-                                  + "         !award rt, 255mp, super255mp, 200"
+                                  + "         !addmmr rt, 255mp, super255mp, 200"
                                   + "\n\n"
-                                  + "important: <amount> must be a positive number",
-                      brief="Adds an award to a particular ladder player")
+                                  + "important: <amount> can be a positive/negative number",
+                      brief="Adds/removes MMR to a particular ladder player")
     async def exec(self, ctx: discord.ext.commands.Context, *, args: str = None):
         if not (discord_common_utils.is_lounge_updater(ctx.author.roles)
                 or discord_common_utils.is_owner(ctx.author.id)):
-            message: discord.message.Message = await ctx.send("award is an updater command")
+            message: discord.message.Message = await ctx.send("addmmr is an updater command")
             await asyncio.sleep(3)
             await message.delete()
         else:
@@ -37,17 +33,17 @@ class Updater(commands.Cog):
             if not parameters:
                 message: str = ""
                 message += "```"
-                message += "!award <rt/ct>, <player's name>, <amount>"
+                message += "!addmmr <rt/ct>, <player's name>, <amount>"
                 message += "\n\n"
-                message += "example: !award rt, 255mp, 200"
+                message += "example: !addmmr rt, 255mp, 200"
                 message += "\n"
-                message += "         !award rt, 255mp, super255mp, 200"
+                message += "         !addmmr rt, 255mp, super255mp, 200"
                 message += "\n\n"
-                message += "important: <amount> must be a positive number"
+                message += "important: <amount> can be a positive/negative number"
                 message += "```"
                 await discord_common_utils.send_message(ctx, message)
             else:
-                message: str = await self.add_ladder_multiple_player_award(parameters)
+                message: str = await self.add_ladder_multiple_player_mmr(parameters)
                 await discord_common_utils.send_message(ctx, message)
 
     @staticmethod
@@ -63,17 +59,15 @@ class Updater(commands.Cog):
                 error = "no player names found"
                 player_names = ",".join(parameters[1:len(parameters)-1])
 
-                error = "invalid award amount"
-                award: int = int(parameters[len(parameters) - 1])
-                if award < 0:
-                    raise ValueError
+                error = "invalid MMR amount"
+                mmr: int = int(parameters[len(parameters) - 1])
 
                 return \
                     {
                         "has_parameters": True,
                         "ladder_id": ladder_id,
                         "player_names": player_names,
-                        "award": award
+                        "mmr": mmr
                     }
             except (ValueError, IndexError, Exception):
                 return \
@@ -114,20 +108,20 @@ class Updater(commands.Cog):
                 return "player not found"
 
     @staticmethod
-    async def add_ladder_multiple_player_award(parameters: list) -> str:
+    async def add_ladder_multiple_player_mmr(parameters: list) -> str:
         result: dict = Updater.parse_multiple_parameters(parameters)
         if result["has_parameters"]:
             ladder_id: int = result["ladder_id"]
             player_names: str = result["player_names"]
-            award: int = result["award"]
-            json_response: dict = await lounge.add_ladder_player_award(ladder_id, player_names, award)
+            mmr: int = result["mmr"]
+            json_response: dict = await lounge.add_ladder_player_mmr(ladder_id, player_names, mmr)
             return Updater.parse_response(json_response)
         else:
             return result["message"]
 
 
 async def main():
-    print(await Updater.add_ladder_multiple_player_award(["rt", "255MP", "500"]))
+    print(await Updater.add_ladder_multiple_player_mmr(["rt", "255MP", "500"]))
 
 
 if __name__ == "__main__":

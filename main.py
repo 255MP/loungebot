@@ -4,6 +4,7 @@ from commands import add_boundary
 from commands import add_class
 from commands import add_event
 from commands import add_ladder_award
+from commands import add_ladder_mmr
 from commands import add_ladder_penalty
 from commands import add_ladder_player
 from commands import add_placement
@@ -69,6 +70,7 @@ bot.add_cog(add_boundary.Administrator(bot))
 bot.add_cog(add_class.Administrator(bot))
 bot.add_cog(add_event.Updater(bot))
 bot.add_cog(add_ladder_award.Updater(bot))
+bot.add_cog(add_ladder_mmr.Updater(bot))
 bot.add_cog(add_ladder_penalty.Updater(bot))
 bot.add_cog(add_ladder_player.Updater(bot))
 bot.add_cog(add_placement.Administrator(bot))

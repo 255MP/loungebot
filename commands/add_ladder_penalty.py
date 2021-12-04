@@ -100,10 +100,10 @@ class Updater(commands.Cog):
                 text += result["player_name"]
                 if result["current_mmr"] is not None:
                     text += ", MMR: " + str(result["current_mmr"])
-                    text += " (" + result["current_division"] + ")"
+                    text += " (" + result["current_class"] + ")"
                 if result["current_lr"] is not None:
                     text += ", LR: " + str(result["current_lr"])
-                    text += " (" + result["current_class"] + ")"
+                    text += " (" + result["current_division"] + ")"
                 if result["penalties"] is not None:
                     text += ", Award/Penalties: " + str(result["penalties"])
                 text += "\n"
