@@ -87,8 +87,6 @@ class Updater(commands.Cog):
                         text += "below {}".format(result["maximum_mmr"])
                     else:
                         text += "unknown"
-                    text += ", "
-                    text += result["color"]
                     text += "\n"
                 if text:
                     return text

@@ -94,11 +94,9 @@ class Administrator(commands.Cog):
                     elif result["minimum_mmr"]:
                         text += "above {}".format(result["minimum_mmr"])
                     elif result["maximum_mmr"]:
-                        text += "0-{}".format(result["maximum_mmr"])
+                        text += "below {}".format(result["maximum_mmr"])
                     else:
                         text += "unknown"
-                    text += ", "
-                    text += result["color"]
                     text += "\n"
                 if text:
                     return text
