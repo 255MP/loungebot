@@ -40,72 +40,21 @@ class Updater(commands.Cog):
             else:
                 return "unlinked discord user list not found"
         else:
-            text = ""
+            text: str = ""
 
-            # missing discord id
-            for result in json_response["results"]:
-                if not result["discord_user_id"]:
-                    text += result["player_name"] + " is missing a Discord ID"
-                    text += "\n"
+            text += Updater.determine_missing_discord(json_response)
 
             # unlinked users with roles
-            discord_user_id_map: dict = dict({})
-            missing_discord_user_id_map: dict = dict({})
-            for result in json_response["results"]:
-                player_name: str = str(result["player_name"]).lower().replace(" ", "")
-                if result["discord_user_id"]:
-                    discord_user_id: int = int(result["discord_user_id"])
-                    discord_user_id_map[str(discord_user_id)] = result["player_name"]
-                else:
-                    missing_discord_user_id_map[player_name] = result["player_name"]
-
-            members: list[discord.Member] = guild.members
-            member: discord.Member
-            for member in members:
-                role: discord.Role
-                is_ladder_player: bool = False
-                for role in member.roles:
-                    if "Placement" not in role.name and "Request" not in role.name and \
-                            ("RT" in role.name or "CT" in role.name):
-                        is_ladder_player = True
-
-                if is_ladder_player and not discord_user_id_map.get(str(member.id)):
-                    text += member.mention + " has roles but their discord id is not found on the Lounge site"
-                    discord_display_name = str(member.display_name).lower().replace(" ", "")
-                    if missing_discord_user_id_map.get(discord_display_name):
-                        text += " - possible match: " + missing_discord_user_id_map.get(discord_display_name)
-                    text += "\n"
+            text += Updater.determine_unlinked_discord_user_with_roles(guild, json_response)
 
             # name does not match
-            for result in json_response["results"]:
-                player_name: str = str(result["player_name"]).lower().replace(" ", "")
-                if result["discord_user_id"]:
-                    discord_user_id: int = int(result["discord_user_id"])
-                    member: discord.Member = guild.get_member(discord_user_id)
-                    if member:
-                        discord_display_name = str(member.display_name).lower().replace(" ", "")
-                        if player_name != discord_display_name:
-                            text += str(member.display_name)
-                            text += " name does not match the Lounge site: "
-                            text += str(result["player_name"])
-                            text += " <@!" + str(discord_user_id) + ">"
-                            text += "\n"
-
-            discord_user_name_map: dict = dict({})
-            for result in json_response["results"]:
-                player_name: str = str(result["player_name"]).lower().replace(" ", "")
-                if result["discord_user_id"]:
-                    discord_user_id: int = int(result["discord_user_id"])
-                    discord_user_name_map[player_name] = discord_user_id
+            text += Updater.determine_discord_name_mismatch_with_site(guild, json_response)
 
             # discord does not match
-            Updater.determine_discord_mismatch(guild, json_response)
+            text += Updater.determine_discord_mismatch(guild, json_response)
 
             # multiple account to single discord
-            Updater.determine_multiple_account_to_single_discord(json_response)
-
-            # ladder role with no matching discord id
-            Updater.determine_ladder_role_with_no_matching_discord_id(guild, json_response)
+            text += Updater.determine_multiple_account_to_single_discord(json_response)
 
             if text:
                 return text
@@ -113,8 +62,77 @@ class Updater(commands.Cog):
                 return "no mismatch found"
 
     @staticmethod
+    def determine_missing_discord(json_response: dict) -> str:
+        text: str = ""
+
+        for result in json_response["results"]:
+            if not result["discord_user_id"]:
+                text += result["player_name"] + " is missing a Discord ID"
+                text += "\n"
+
+        return text
+
+    @staticmethod
+    def determine_unlinked_discord_user_with_roles(guild: discord.Guild, json_response: dict) -> str:
+        text: str = ""
+
+        discord_user_id_map: dict = dict({})
+        discord_user_name_map: dict = dict({})
+        missing_discord_user_id_map: dict = dict({})
+        for result in json_response["results"]:
+            player_name: str = str(result["player_name"]).lower().replace(" ", "")
+            discord_user_name_map[player_name] = result["discord_user_id"]
+            if result["discord_user_id"]:
+                discord_user_id: int = int(result["discord_user_id"])
+                discord_user_id_map[str(discord_user_id)] = result["player_name"]
+            else:
+                missing_discord_user_id_map[player_name] = result["player_name"]
+
+        members: list[discord.Member] = guild.members
+        member: discord.Member
+        for member in members:
+            role: discord.Role
+            is_ladder_player: bool = False
+            for role in member.roles:
+                if "Squad" not in role.name and "Queue" not in role.name and "Tournament" not in role.name and \
+                        "Placement" not in role.name and "Request" not in role.name and \
+                        ("RT " in role.name or "CT " in role.name):
+                    is_ladder_player = True
+
+            if is_ladder_player and not discord_user_id_map.get(str(member.id)):
+                text += member.mention + " has roles but their discord id is not found on the Lounge site"
+                discord_display_name = str(member.display_name).lower().replace(" ", "")
+                if missing_discord_user_id_map.get(discord_display_name):
+                    text += " - possible match: " + missing_discord_user_id_map.get(discord_display_name)
+                if discord_user_name_map.get(discord_display_name):
+                    text += " - possible duplicate of: <@!" + discord_user_name_map.get(discord_display_name) + ">"
+                text += "\n"
+
+        return text
+
+    @staticmethod
+    def determine_discord_name_mismatch_with_site(guild: discord.Guild, json_response: dict) -> str:
+        text: str = ""
+
+        for result in json_response["results"]:
+            player_name: str = str(result["player_name"]).lower().replace(" ", "")
+            if result["discord_user_id"]:
+                discord_user_id: int = int(result["discord_user_id"])
+                member: discord.Member = guild.get_member(discord_user_id)
+                if member:
+                    discord_display_name = str(member.display_name).lower().replace(" ", "")
+                    if player_name != discord_display_name:
+                        text += str(member.display_name)
+                        text += " name does not match the Lounge site: "
+                        text += str(result["player_name"])
+                        text += " <@!" + str(discord_user_id) + ">"
+                        text += "\n"
+
+        return text
+
+    @staticmethod
     def determine_discord_mismatch(guild: discord.Guild, json_response: dict) -> str:
-        text = ""
+        text: str = ""
 
         discord_user_name_map: dict = dict({})
         for result in json_response["results"]:
@@ -129,7 +147,9 @@ class Updater(commands.Cog):
             role: discord.Role
             is_ladder_player: bool = False
             for role in member.roles:
-                if "Placement" not in role.name and ("RT" in role.name or "CT" in role.name):
+                if "Squad" not in role.name and "Queue" not in role.name and "Tournament" not in role.name and \
+                        "Placement" not in role.name and "Request" not in role.name and \
+                        ("RT " in role.name or "CT " in role.name):
                     is_ladder_player = True
             discord_display_name = str(member.display_name).lower().replace(" ", "")
             if is_ladder_player and discord_user_name_map.get(discord_display_name) \
@@ -142,7 +162,7 @@ class Updater(commands.Cog):
 
     @staticmethod
     def determine_multiple_account_to_single_discord(json_response: dict) -> str:
-        text = ""
+        text: str = ""
 
         discord_user_id_map: dict = dict({})
         for result in json_response["results"]:
@@ -159,30 +179,3 @@ class Updater(commands.Cog):
 
         return text
 
-    @staticmethod
-    def determine_ladder_role_with_no_matching_discord_id(guild: discord.Guild, json_response: dict) -> str:
-        text = ""
-
-        discord_user_name_map: dict = dict({})
-        for result in json_response["results"]:
-            player_name: str = str(result["player_name"]).lower().replace(" ", "")
-            if result["discord_user_id"]:
-                discord_user_id: int = int(result["discord_user_id"])
-                discord_user_name_map[player_name] = discord_user_id
-
-        members: list[discord.Member] = guild.members
-        member: discord.Member
-        for member in members:
-            role: discord.Role
-            is_ladder_player: bool = False
-            for role in member.roles:
-                if "Placement" not in role.name and ("RT" in role.name or "CT" in role.name):
-                    is_ladder_player = True
-            discord_display_name = str(member.display_name).lower().replace(" ", "")
-            if is_ladder_player and discord_user_name_map.get(discord_display_name) \
-                    and discord_user_name_map.get(discord_display_name) != member.id:
-                text += member.mention + " discord does not match the Lounge site: "
-                text += discord_display_name + " <@!" + str(discord_user_name_map.get(discord_display_name)) + ">"
-                text += "\n"
-
-        return text
