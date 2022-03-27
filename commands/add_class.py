@@ -14,11 +14,11 @@ class Administrator(commands.Cog):
     @commands.command(name="addclass",
                       description="Adds a new class to a particular ladder"
                                   + "\n\n"
-                                  + "!addclass <rt/ct>, <class name>, <minimum mmr>, <hex color>"
+                                  + "!addclass <rt/ct>, <class name>, <minimum mmr>"
                                   + "\n\n"
-                                  + "example: !addclass rt, Class Y, 250, #663300"
+                                  + "example: !addclass rt, Class Y, 250"
                                   + "\n"
-                                  + "         !addclass rt, Class Y, null, #663300"
+                                  + "         !addclass rt, Class Y, null"
                                   + "\n"
                                   + "         <minimum mmr> can be any number greater than 0 or null",
                       brief="Adds a new class to a particular ladder")
@@ -33,11 +33,11 @@ class Administrator(commands.Cog):
             if not parameters:
                 message: str = ""
                 message += "```"
-                message += "!addclass <rt/ct>, <class name>, <minimum mmr>, <hex color>"
+                message += "!addclass <rt/ct>, <class name>, <minimum mmr>"
                 message += "\n\n"
-                message += "example: !addclass rt, Class Y, 250, #663300"
+                message += "example: !addclass rt, Class Y, 250"
                 message += "\n"
-                message += "         !addclass rt, Class Y, null, #663300"
+                message += "         !addclass rt, Class Y, null"
                 message += "\n"
                 message += "         <minimum mmr> can be any number greater than 0 or null"
                 message += "```"
@@ -68,18 +68,12 @@ class Administrator(commands.Cog):
                     if minimum_mmr < 0:
                         raise ValueError
 
-                error = "invalid hex color"
-                color: str = parameters[3]
-                if len(color) != 7:
-                    raise ValueError
-
                 return \
                     {
                         "has_parameters": True,
                         "ladder_id": ladder_id,
                         "class_name": class_name,
-                        "minimum_mmr": minimum_mmr,
-                        "color": color
+                        "minimum_mmr": minimum_mmr
                     }
             except (ValueError, IndexError):
                 return \
@@ -101,8 +95,7 @@ class Administrator(commands.Cog):
             ladder_id: int = result["ladder_id"]
             class_name: str = result["class_name"]
             minimum_mmr: int = result["minimum_mmr"]
-            color: str = result["color"]
-            json_response: dict = await lounge.add_ladder_class(ladder_id, class_name, minimum_mmr, color)
+            json_response: dict = await lounge.add_ladder_class(ladder_id, class_name, minimum_mmr)
             if json_response["status"] == "failed":
                 if json_response["reason"]:
                     return json_response["reason"]

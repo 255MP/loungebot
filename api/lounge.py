@@ -51,14 +51,13 @@ async def remove_ladder_boundary(ladder_id: int, boundary_name: str) -> dict:
         return {"status": "failed", "reason": "unable to connect to lounge api"}
 
 
-async def add_ladder_class(ladder_id: int, class_name: str, minimum_mmr: int, color: str) -> dict:
+async def add_ladder_class(ladder_id: int, class_name: str, minimum_mmr: int) -> dict:
     try:
         params: dict = \
             {
                 "ladder_id": ladder_id,
                 "class_name": class_name,
                 "minimum_mmr": minimum_mmr,
-                "color": color,
                 "code": config.get_lounge_webservice_api_token()
             }
         url: str = config.get_lounge_webservice() + "/api/ladderclass.php"
