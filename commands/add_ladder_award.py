@@ -56,8 +56,8 @@ class Updater(commands.Cog):
         if parameters:
             try:
                 error = "invalid ladder id"
-                ladder_id: int = int(config.get_lounge_webservice_dictionary(str(parameters[0]).lower()))
-                if not ladder_id or ladder_id < 0:
+                ladder_type: str = config.get_lounge_webservice_dictionary(str(parameters[0]).lower())
+                if not ladder_type:
                     raise ValueError
 
                 error = "no player names found"
@@ -71,7 +71,7 @@ class Updater(commands.Cog):
                 return \
                     {
                         "has_parameters": True,
-                        "ladder_id": ladder_id,
+                        "ladder_type": ladder_type,
                         "player_names": player_names,
                         "award": award
                     }
@@ -117,10 +117,10 @@ class Updater(commands.Cog):
     async def add_ladder_multiple_player_award(parameters: list) -> str:
         result: dict = Updater.parse_multiple_parameters(parameters)
         if result["has_parameters"]:
-            ladder_id: int = result["ladder_id"]
+            ladder_type: str = result["ladder_type"]
             player_names: str = result["player_names"]
             award: int = result["award"]
-            json_response: dict = await lounge.add_ladder_player_award(ladder_id, player_names, award)
+            json_response: dict = await lounge.add_ladder_player_award(ladder_type, player_names, award)
             return Updater.parse_response(json_response)
         else:
             return result["message"]

@@ -43,8 +43,8 @@ class Administrator(commands.Cog):
         if parameters:
             try:
                 error = "invalid ladder id"
-                ladder_id: int = int(config.get_lounge_webservice_dictionary(str(parameters[0]).lower()))
-                if not ladder_id or ladder_id < 0:
+                ladder_type: str = config.get_lounge_webservice_dictionary(str(parameters[0]).lower())
+                if not ladder_type:
                     raise ValueError
 
                 error = "no tier name found"
@@ -55,7 +55,7 @@ class Administrator(commands.Cog):
                 return \
                     {
                         "has_parameters": True,
-                        "ladder_id": ladder_id,
+                        "ladder_type": ladder_type,
                         "tier_name": tier_name
                     }
             except (ValueError, IndexError, Exception):
@@ -75,9 +75,9 @@ class Administrator(commands.Cog):
     async def add_ladder_tier(parameters: list) -> str:
         result: dict = Administrator.parse_parameters(parameters)
         if result["has_parameters"]:
-            ladder_id: int = result["ladder_id"]
+            ladder_type: str = result["ladder_type"]
             tier_name: str = result["tier_name"]
-            json_response: dict = await lounge.add_ladder_tier(ladder_id, tier_name)
+            json_response: dict = await lounge.add_ladder_tier(ladder_type, tier_name)
             if json_response["status"] == "failed":
                 if json_response["reason"]:
                     return json_response["reason"]

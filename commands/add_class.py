@@ -51,8 +51,8 @@ class Administrator(commands.Cog):
         if parameters:
             try:
                 error = "invalid ladder id"
-                ladder_id: int = int(config.get_lounge_webservice_dictionary(str(parameters[0]).lower()))
-                if not ladder_id or ladder_id < 0:
+                ladder_type: str = config.get_lounge_webservice_dictionary(str(parameters[0]).lower())
+                if not ladder_type:
                     raise ValueError
 
                 error = "no class name found"
@@ -71,7 +71,7 @@ class Administrator(commands.Cog):
                 return \
                     {
                         "has_parameters": True,
-                        "ladder_id": ladder_id,
+                        "ladder_type": ladder_type,
                         "class_name": class_name,
                         "minimum_mmr": minimum_mmr
                     }
@@ -92,10 +92,10 @@ class Administrator(commands.Cog):
     async def add_ladder_class(parameters: list) -> str:
         result: dict = Administrator.parse_parameters(parameters)
         if result["has_parameters"]:
-            ladder_id: int = result["ladder_id"]
+            ladder_type: str = result["ladder_type"]
             class_name: str = result["class_name"]
             minimum_mmr: int = result["minimum_mmr"]
-            json_response: dict = await lounge.add_ladder_class(ladder_id, class_name, minimum_mmr)
+            json_response: dict = await lounge.add_ladder_class(ladder_type, class_name, minimum_mmr)
             if json_response["status"] == "failed":
                 if json_response["reason"]:
                     return json_response["reason"]

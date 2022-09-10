@@ -43,8 +43,8 @@ class Administrator(commands.Cog):
         if parameters:
             try:
                 error = "invalid ladder id"
-                ladder_id: int = int(config.get_lounge_webservice_dictionary(str(parameters[0]).lower()))
-                if not ladder_id or ladder_id < 0:
+                ladder_type: str = config.get_lounge_webservice_dictionary(str(parameters[0]).lower())
+                if not ladder_type:
                     raise ValueError
 
                 error = "no placement name found"
@@ -65,7 +65,7 @@ class Administrator(commands.Cog):
                 return \
                     {
                         "has_parameters": True,
-                        "ladder_id": ladder_id,
+                        "ladder_type": ladder_type,
                         "placement_name": placement_name,
                         "base_mmr": base_mmr,
                         "base_lr": base_lr
@@ -87,11 +87,11 @@ class Administrator(commands.Cog):
     async def add_ladder_placement(parameters: list) -> str:
         result: dict = Administrator.parse_parameters(parameters)
         if result["has_parameters"]:
-            ladder_id: int = result["ladder_id"]
+            ladder_type: str = result["ladder_type"]
             placement_name: str = result["placement_name"]
             base_mmr: int = result["base_mmr"]
             base_lr: int = result["base_lr"]
-            json_response: dict = await lounge.add_ladder_placement(ladder_id, placement_name, base_mmr, base_lr)
+            json_response: dict = await lounge.add_ladder_placement(ladder_type, placement_name, base_mmr, base_lr)
             if json_response["status"] == "failed":
                 if json_response["reason"]:
                     return json_response["reason"]

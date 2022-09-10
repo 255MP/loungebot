@@ -42,14 +42,14 @@ class Updater(commands.Cog):
     def parse_parameters(parameters: list) -> dict:
         if parameters:
             try:
-                ladder_id: int = int(config.get_lounge_webservice_dictionary(str(parameters[0]).lower()))
-                if not ladder_id or ladder_id < 0:
+                ladder_type: str = config.get_lounge_webservice_dictionary(str(parameters[0]).lower())
+                if not ladder_type:
                     raise ValueError
 
                 return \
                     {
                         "has_parameters": True,
-                        "ladder_id": ladder_id
+                        "ladder_type": ladder_type
                     }
             except (ValueError, IndexError):
                 return \
@@ -68,8 +68,8 @@ class Updater(commands.Cog):
     async def retrieve_ladder_tiers(parameters: list) -> str:
         result: dict = Updater.parse_parameters(parameters)
         if result["has_parameters"]:
-            ladder_id: int = result["ladder_id"]
-            json_response: dict = await lounge.retrieve_ladder_tier(ladder_id)
+            ladder_type: str = result["ladder_type"]
+            json_response: dict = await lounge.retrieve_ladder_tier(ladder_type)
             if json_response["status"] == "failed":
                 if json_response["reason"]:
                     return json_response["reason"]

@@ -49,8 +49,8 @@ class Updater(commands.Cog):
             try:
                 temp_parameters = parameters.copy()
                 error = "invalid ladder id"
-                ladder_id: int = int(config.get_lounge_webservice_dictionary(str(temp_parameters[0])))
-                if not ladder_id or ladder_id < 0:
+                ladder_type: str = int(config.get_lounge_webservice_dictionary(str(temp_parameters[0])))
+                if not ladder_type:
                     raise ValueError
                 temp_parameters.pop(0)
 
@@ -62,7 +62,7 @@ class Updater(commands.Cog):
                 return \
                     {
                         "has_parameters": True,
-                        "ladder_id": ladder_id,
+                        "ladder_type": ladder_type,
                         "event_data": event_data
                     }
             except (ValueError, IndexError, Exception):
@@ -82,9 +82,9 @@ class Updater(commands.Cog):
     async def add_ladder_event(parameters: list) -> str:
         result: dict = Updater.parse_parameters(parameters)
         if result["has_parameters"]:
-            ladder_id: int = result["ladder_id"]
+            ladder_type: str = result["ladder_type"]
             event_data: str = result["event_data"]
-            json_response: dict = await lounge.add_ladder_event(ladder_id, event_data)
+            json_response: dict = await lounge.add_ladder_event(ladder_type, event_data)
             if json_response["status"] == "failed":
                 if json_response["reason"]:
                     return json_response["reason"]
