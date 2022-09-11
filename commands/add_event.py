@@ -49,7 +49,7 @@ class Updater(commands.Cog):
             try:
                 temp_parameters = parameters.copy()
                 error = "invalid ladder id"
-                ladder_type: str = int(config.get_lounge_webservice_dictionary(str(temp_parameters[0])))
+                ladder_type: str = config.get_lounge_webservice_dictionary(str(temp_parameters[0]))
                 if not ladder_type:
                     raise ValueError
                 temp_parameters.pop(0)
