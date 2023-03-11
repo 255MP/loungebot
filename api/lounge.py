@@ -352,12 +352,27 @@ async def remove_player(player_name: str) -> dict:
         return {"status": "failed", "reason": "unable to connect to lounge api"}
 
 
-async def update_player_discord(player_name: str, discord_user_id: int) -> dict:
+async def update_player_controller(discord_user_id: int, game_controller: str) -> dict:
+    try:
+        params: dict = \
+            {
+                "discord_user_id": discord_user_id,
+                "game_controller": game_controller,
+                "code": config.get_lounge_webservice_api_token()
+            }
+        url: str = config.get_lounge_webservice() + "/api/player.php"
+        response: requests.Response = requests.put(url, headers={"content-type": "application/json"}, params=params)
+        return json.loads(response.text.strip())
+    except Exception:
+        return {"status": "failed", "reason": "unable to connect to lounge api"}
+
+
+async def update_player_discord(player_name: str, new_discord_user_id: int) -> dict:
     try:
         params: dict = \
             {
                 "player_name": player_name,
-                "discord_user_id": discord_user_id,
+                "new_discord_user_id": new_discord_user_id,
                 "code": config.get_lounge_webservice_api_token()
             }
         url: str = config.get_lounge_webservice() + "/api/player.php"

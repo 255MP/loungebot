@@ -29,6 +29,7 @@ from commands import restore_event
 from commands import retrieve_ladder_player
 from commands import retrieve_ladder_player_game_counter
 from commands import retrieve_player
+from commands import update_player_controller
 from commands import update_player_discord_user_id
 from commands import update_player_flag
 from commands import update_player_name
@@ -95,6 +96,7 @@ bot.add_cog(restore_event.Updater(bot))
 bot.add_cog(retrieve_ladder_player.Updater(bot))
 bot.add_cog(retrieve_ladder_player_game_counter.Updater(bot))
 bot.add_cog(retrieve_player.Updater(bot))
+bot.add_cog(update_player_controller.Public(bot))
 bot.add_cog(update_player_discord_user_id.Updater(bot))
 bot.add_cog(update_player_flag.Administrator(bot))
 bot.add_cog(update_player_name.Updater(bot))
