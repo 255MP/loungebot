@@ -11,7 +11,9 @@ def is_owner(discord_user_id: int) -> bool:
 
 
 def is_lounge_admin(roles: list) -> bool:
-    return contains_role(roles, ["RT Admin", "CT Admin", "Boss"])
+    return contains_role(roles, ["Lower Tier RT Arbitrator", "Higher Tier RT Arbitrator",
+                                 "Lower Tier CT Arbitrator", "Higher Tier CT Arbitrator",
+                                 "RT Admin", "CT Admin", "Boss"])
 
 
 def is_lounge_updater(roles: list) -> bool:
