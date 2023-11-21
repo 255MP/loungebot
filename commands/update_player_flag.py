@@ -1,6 +1,7 @@
 from api import lounge
 import asyncio
 import common_utils
+import config
 import discord
 import discord_common_utils
 import json
@@ -26,6 +27,10 @@ class Administrator(commands.Cog):
                                   + "https://flagcdn.com/en/codes.json",
                       brief="Update a player's country flag")
     async def exec(self, ctx: discord.ext.commands.Context, *, args: str = None):
+        guild: discord.Guild = ctx.guild
+        if not guild.id == config.get_lounge_guild_id():
+            return
+
         if not (discord_common_utils.is_lounge_updater(ctx.author.roles)
                 or discord_common_utils.is_owner(ctx.author.id)):
             message: discord.message.Message = await ctx.send("changeflag is an updater command")

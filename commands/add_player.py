@@ -1,6 +1,7 @@
 from api import lounge
 import asyncio
 import common_utils
+import config
 import discord
 import discord_common_utils
 from discord.ext import commands
@@ -18,6 +19,10 @@ class Updater(commands.Cog):
                                   + "example: !addplayer 255mp, <@!311022748753330176>",
                       brief="Adds a player to the site")
     async def exec(self, ctx: discord.ext.commands.Context, *, args: str = None):
+        guild: discord.Guild = ctx.guild
+        if not guild.id == config.get_lounge_guild_id():
+            return
+
         if not (discord_common_utils.is_lounge_updater(ctx.author.roles)
                 or discord_common_utils.is_owner(ctx.author.id)):
             message: discord.message.Message = await ctx.send("addplayer is an updater command")

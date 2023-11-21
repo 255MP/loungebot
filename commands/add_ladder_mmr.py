@@ -23,6 +23,10 @@ class Updater(commands.Cog):
                                   + "important: <amount> can be a positive/negative number",
                       brief="Adds/removes MMR to a particular ladder player")
     async def exec(self, ctx: discord.ext.commands.Context, *, args: str = None):
+        guild: discord.Guild = ctx.guild
+        if not guild.id == config.get_lounge_guild_id():
+            return
+
         if not (discord_common_utils.is_lounge_updater(ctx.author.roles)
                 or discord_common_utils.is_owner(ctx.author.id)):
             message: discord.message.Message = await ctx.send("addmmr is an updater command")

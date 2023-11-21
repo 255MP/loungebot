@@ -20,6 +20,10 @@ class Updater(commands.Cog):
                                   + "example: !removeladderplayer rt, 255mp",
                       brief="Removes a player from a particular ladder")
     async def exec(self, ctx: discord.ext.commands.Context, *, args: str = None):
+        guild: discord.Guild = ctx.guild
+        if not guild.id == config.get_lounge_guild_id():
+            return
+
         if not (discord_common_utils.is_lounge_updater(ctx.author.roles)
                 or discord_common_utils.is_owner(ctx.author.id)):
             message: discord.message.Message = await ctx.send("removeladderplayer is an updater command")

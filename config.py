@@ -16,7 +16,14 @@ def bot_owner_discord_user_id() -> int:
     if config.get("bot.owner.discord.user.id"):
         return int(config.get("bot.owner.discord.user.id").data)
     else:
-        return ""
+        return -1
+
+
+def get_lounge_guild_id() -> int:
+    if config.get("lounge.guild.id"):
+        return int(config.get("lounge.guild.id").data)
+    else:
+        return -1
 
 
 def get_lounge_webservice() -> str:
@@ -42,7 +49,6 @@ def get_lounge_webservice_dictionary(key: str) -> str:
             return None
     else:
         return ""
-
 
 def reload_config():
     with open(Path(__file__).parent / "config/config.properties", "rb") as config_properties:

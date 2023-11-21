@@ -1,5 +1,6 @@
 from api import lounge
 import asyncio
+import config
 import discord
 import discord_common_utils
 from discord.ext import commands
@@ -18,6 +19,10 @@ class Updater(commands.Cog):
                                   + "example: !listmismatch",
                       brief="Shows a list of discrepancies/mismatches for Discord and the Lounge iste")
     async def exec(self, ctx: discord.ext.commands.Context, *, args: str = None):
+        guild: discord.Guild = ctx.guild
+        if not guild.id == config.get_lounge_guild_id():
+            return
+
         if not (discord_common_utils.is_lounge_updater(ctx.author.roles)
                 or discord_common_utils.is_owner(ctx.author.id)):
             message: discord.message.Message = await ctx.send("listmismatch is an updater command")
@@ -88,7 +93,7 @@ class Updater(commands.Cog):
             else:
                 missing_discord_user_id_map[player_name] = result["player_name"]
 
-        members: list[discord.Member] = guild.members
+        members: list = guild.members
         member: discord.Member
         for member in members:
             role: discord.Role
@@ -141,7 +146,7 @@ class Updater(commands.Cog):
                 discord_user_id: int = int(result["discord_user_id"])
                 discord_user_name_map[player_name] = discord_user_id
 
-        members: list[discord.Member] = guild.members
+        members: list = guild.members
         member: discord.Member
         for member in members:
             role: discord.Role

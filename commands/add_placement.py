@@ -19,6 +19,10 @@ class Administrator(commands.Cog):
                                   + "example: !addplacement rt, Wood, 250, 250",
                       brief="Adds a new placement to a particular ladder")
     async def exec(self, ctx: discord.ext.commands.Context, *, args: str = None):
+        guild: discord.Guild = ctx.guild
+        if not guild.id == config.get_lounge_guild_id():
+            return
+
         if not (discord_common_utils.is_lounge_admin(ctx.author.roles)
                 or discord_common_utils.is_owner(ctx.author.id)):
             message: discord.message.Message = await ctx.send("addplacement is an admin command")

@@ -30,6 +30,17 @@ def contains_role(roles: list, matches: list) -> bool:
     return False
 
 
+def get_matching_roles(roles: list, matches: list) -> list:
+    match: list = []
+    role: discord.Role
+    for role in roles:
+        match: str
+        for match in matches:
+            if role.name.lower().replace(" ", "") == match.lower().replace(" ", ""):
+                match.append(role)
+    return match
+
+
 async def send_message(ctx: discord.ext.commands.Context, message: str):
     if len(message) > MAX_MESSAGE_LENGTH:
         msg = message

@@ -1,6 +1,7 @@
 from api import lounge
 import asyncio
 import common_utils
+import config
 import discord
 import discord_common_utils
 from discord.ext import commands
@@ -18,6 +19,10 @@ class Public(commands.Cog):
                                   + "example: !changecontroller gcn",
                       brief="Update player's controller")
     async def exec(self, ctx: discord.ext.commands.Context, *, args: str = None):
+        guild: discord.Guild = ctx.guild
+        if not guild.id == config.get_lounge_guild_id():
+            return
+
         parameters: list = common_utils.split_comma(args)
         if not parameters:
             message: str = ""
@@ -89,7 +94,6 @@ class Public(commands.Cog):
 
 async def main():
     print(await Public.update_player_controller(311022748753330176, ["wiiwheel"]))
-
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -1,4 +1,6 @@
+import config
 from api import lounge
+
 import discord
 from discord.ext import commands
 
@@ -16,6 +18,9 @@ class Bot(commands.Cog):
         if not guild:
             return
 
+        if not guild.id == config.get_lounge_guild_id():
+            return
+
         player: dict = await retrieve_player(after.id)
         if player:
             if player["player_name"] != after.display_name:
@@ -26,8 +31,11 @@ class Bot(commands.Cog):
         if after.bot:
             return
 
-        guild: discord.Guild = self.bot.get_guild(387347467332485122)
+        guild: discord.Guild = self.bot.get_guild(config.get_lounge_guild_id())
         if not guild:
+            return
+
+        if not guild.id == config.get_lounge_guild_id():
             return
 
         member: discord.Member = guild.get_member(after.id)
@@ -46,6 +54,9 @@ class Bot(commands.Cog):
 
         guild: discord.Guild = member.guild
         if not guild:
+            return
+
+        if not guild.id == config.get_lounge_guild_id():
             return
 
         player: dict = await retrieve_player(member.id)
